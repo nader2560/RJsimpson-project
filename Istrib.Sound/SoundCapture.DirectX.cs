@@ -59,14 +59,16 @@ namespace Istrib.Sound
             {
                 if (!cachedInputFormat.HasValue)
                 {
-                    WaveFormat result = new WaveFormat();
-                    result.SamplesPerSecond = WaveFormat.SampleRate;
-                    result.FormatTag = WaveFormatTag.Pcm;
-                    result.Channels = WaveFormat.Channels;
-                    result.BitsPerSample = WaveFormat.BitsPerSample;
-                    result.BlockAlign = WaveFormat.BlockAlign;
-                    result.AverageBytesPerSecond = WaveFormat.AverageBytesPerSecond;
-                    
+                    WaveFormat result = new WaveFormat
+                    {
+                        SamplesPerSecond = WaveFormat.SampleRate,
+                        FormatTag = WaveFormatTag.Pcm,
+                        Channels = WaveFormat.Channels,
+                        BitsPerSample = WaveFormat.BitsPerSample,
+                        BlockAlign = WaveFormat.BlockAlign,
+                        AverageBytesPerSecond = WaveFormat.AverageBytesPerSecond
+                    };
+
                     cachedInputFormat = result;
                 }
 
@@ -142,7 +144,7 @@ namespace Istrib.Sound
             {
                 applicationBuffer = new CaptureBuffer(dscheckboxd, applicationDevice);
             }
-            catch (ApplicationException ex)
+            catch (ApplicationException)
             {
                 //Yeah, I know, D i r e c t X managed...
                 throw new ApplicationException("The sound capturing device is not ready. Is '" + CaptureDevice + "' plugged in?");
@@ -264,11 +266,9 @@ namespace Istrib.Sound
         private void RecordCapturedData(bool flush)
         {
             byte[] CaptureData = null;
-            int ReadPos;
-            int CapturePos;
             int LockSize;
 
-            applicationBuffer.GetCurrentPosition(out CapturePos, out ReadPos);
+            applicationBuffer.GetCurrentPosition(out int CapturePos, out int ReadPos);
             LockSize = ReadPos - nextCaptureOffset;
             if (LockSize < 0)
                 LockSize += captureBufferSize;

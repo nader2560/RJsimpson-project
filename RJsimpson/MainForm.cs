@@ -225,7 +225,7 @@ namespace RJsimpson
                     if (fileStream != null) fileStream.Close();  //This line is me being overly cautious, fileStream will never be null unless an exception occurs... and I know the "using" does it but its helpful to be explicit - especially when we encounter errors - at least for me anyway!
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
 

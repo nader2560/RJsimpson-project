@@ -8,7 +8,6 @@ namespace RJsimpson
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-        private System.ComponentModel.IContainer components2 = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -31,29 +30,30 @@ namespace RJsimpson
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.SoftwareName = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.flowLayoutPanelWaveForm = new System.Windows.Forms.FlowLayoutPanel();
-            this.audioLevelsUIControl1 = new RJsimpson.AudioLevelsUIControl();
+            this.mp3SoundCapture = new Istrib.Sound.Mp3SoundCapture(this.components);
+            this.mp3MicCapture = new Istrib.Sound.Mp3SoundCapture(this.components);
+            this.label3 = new System.Windows.Forms.Label();
+            this.StopRecPictureBox = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.PlayingIcon = new System.Windows.Forms.PictureBox();
             this.Settings = new System.Windows.Forms.PictureBox();
             this.Play = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.audioLevelsUIControl1 = new RJsimpson.AudioLevelsUIControl();
+            this.BroadCastingLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanelWaveForm.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StopRecPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PlayingIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Settings)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Play)).BeginInit();
-            this.components = new System.ComponentModel.Container();
-            this.components2 = new System.ComponentModel.Container();
-
-            this.mp3SoundCapture = new Istrib.Sound.Mp3SoundCapture(this.components);
-            this.mp3MicCapture = new Istrib.Sound.Mp3SoundCapture(this.components2);
-
             this.SuspendLayout();
             // 
             // SoftwareName
@@ -88,19 +88,7 @@ namespace RJsimpson
             this.label2.Size = new System.Drawing.Size(68, 20);
             this.label2.TabIndex = 5;
             this.label2.Text = "Settings";
-
-            //
-            //MP3SOUNDCAPTURE
             // 
-
-            this.mp3SoundCapture.NormalizeVolume = false;
-            this.mp3SoundCapture.OutputType = Istrib.Sound.Mp3SoundCapture.Outputs.Wav;
-            this.mp3SoundCapture.UseSynchronizationContext = true;
-
-            this.mp3MicCapture.NormalizeVolume = false;
-            this.mp3MicCapture.OutputType = Istrib.Sound.Mp3SoundCapture.Outputs.Wav;
-            this.mp3MicCapture.UseSynchronizationContext = true;
-            //
             // flowLayoutPanelWaveForm
             // 
             this.flowLayoutPanelWaveForm.Controls.Add(this.audioLevelsUIControl1);
@@ -109,14 +97,41 @@ namespace RJsimpson
             this.flowLayoutPanelWaveForm.Size = new System.Drawing.Size(259, 222);
             this.flowLayoutPanelWaveForm.TabIndex = 8;
             // 
-            // audioLevelsUIControl1
+            // mp3SoundCapture
             // 
-            this.audioLevelsUIControl1.AudioMonitor = null;
-            this.audioLevelsUIControl1.Location = new System.Drawing.Point(3, 3);
-            this.audioLevelsUIControl1.Name = "audioLevelsUIControl1";
-            this.audioLevelsUIControl1.Size = new System.Drawing.Size(256, 219);
-            this.audioLevelsUIControl1.TabIndex = 0;
-            this.audioLevelsUIControl1.Text = "audioLevelsUIControl1";
+            this.mp3SoundCapture.NormalizeVolume = false;
+            this.mp3SoundCapture.OutputType = Istrib.Sound.Mp3SoundCapture.Outputs.Wav;
+            this.mp3SoundCapture.UseSynchronizationContext = true;
+            this.mp3SoundCapture.WaitOnStop = true;
+            // 
+            // mp3MicCapture
+            // 
+            this.mp3MicCapture.NormalizeVolume = false;
+            this.mp3MicCapture.OutputType = Istrib.Sound.Mp3SoundCapture.Outputs.Wav;
+            this.mp3MicCapture.UseSynchronizationContext = true;
+            this.mp3MicCapture.WaitOnStop = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label3.Location = new System.Drawing.Point(244, 485);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(185, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Made From Tunisia with ♥ by eDonec";
+            // 
+            // StopRecPictureBox
+            // 
+            this.StopRecPictureBox.Image = global::RJsimpson.Properties.Resources.stop;
+            this.StopRecPictureBox.Location = new System.Drawing.Point(76, 112);
+            this.StopRecPictureBox.Name = "StopRecPictureBox";
+            this.StopRecPictureBox.Size = new System.Drawing.Size(141, 130);
+            this.StopRecPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StopRecPictureBox.TabIndex = 11;
+            this.StopRecPictureBox.TabStop = false;
+            this.StopRecPictureBox.Click += new System.EventHandler(this.StopRecPictureBox_Click);
             // 
             // pictureBox2
             // 
@@ -171,14 +186,36 @@ namespace RJsimpson
             this.Play.TabStop = false;
             this.Play.Click += new System.EventHandler(this.Play_Click);
             // 
-            // button1
+            // label4
             // 
-            this.button1.Location = new System.Drawing.Point(114, 28);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.Brown;
+            this.label4.Location = new System.Drawing.Point(358, 485);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(15, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "♥";
+            // 
+            // audioLevelsUIControl1
+            // 
+            this.audioLevelsUIControl1.AudioMonitor = null;
+            this.audioLevelsUIControl1.Location = new System.Drawing.Point(3, 3);
+            this.audioLevelsUIControl1.Name = "audioLevelsUIControl1";
+            this.audioLevelsUIControl1.Size = new System.Drawing.Size(256, 219);
+            this.audioLevelsUIControl1.TabIndex = 0;
+            this.audioLevelsUIControl1.Text = "audioLevelsUIControl1";
+            // 
+            // BroadCastingLabel
+            // 
+            this.BroadCastingLabel.AutoSize = true;
+            this.BroadCastingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BroadCastingLabel.ForeColor = System.Drawing.Color.Red;
+            this.BroadCastingLabel.Location = new System.Drawing.Point(96, 255);
+            this.BroadCastingLabel.Name = "BroadCastingLabel";
+            this.BroadCastingLabel.Size = new System.Drawing.Size(103, 20);
+            this.BroadCastingLabel.TabIndex = 13;
+            this.BroadCastingLabel.Text = "Boradcasting";
             // 
             // AnyAppBroadcaster
             // 
@@ -186,7 +223,10 @@ namespace RJsimpson
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(662, 507);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.BroadCastingLabel);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.StopRecPictureBox);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.flowLayoutPanelWaveForm);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
@@ -200,6 +240,7 @@ namespace RJsimpson
             this.Name = "AnyAppBroadcaster";
             this.Text = "AnyAppStreamer";
             this.flowLayoutPanelWaveForm.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.StopRecPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PlayingIcon)).EndInit();
@@ -224,9 +265,10 @@ namespace RJsimpson
         private AudioLevelsUIControl audioLevelsUIControl1 = new AudioLevelsUIControl();
         private  Mp3SoundCapture mp3SoundCapture;
         private  Mp3SoundCapture mp3MicCapture;
-
-
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.PictureBox StopRecPictureBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label BroadCastingLabel;
     }
 }
 

@@ -54,7 +54,7 @@ namespace Istrib.Sound.Example.WinForms
         /// <summary>
         /// закрыть соединение
         /// </summary>
-        public void close()
+        public void Close()
         {
             if (shout_close(this.instance) == SUCCESS)
             {

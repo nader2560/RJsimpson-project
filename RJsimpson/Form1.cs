@@ -26,13 +26,15 @@ namespace RJsimpson
         public AnyAppBroadcaster(LoginForm loginForm)
         {
             InitializeComponent();
-            InitVariables();
+            InitVariables(loginForm);
         }
 
-        private void InitVariables()
+        private void InitVariables(LoginForm loginForm)
         {
             this.loginForm = loginForm;
-
+            StopBroadCasting = false;
+            StopRecPictureBox.Visible = false;
+            BroadCastingLabel.Visible = false;
             audioLevelsUIControl1.Visible = false;
 
             OutputFolder = Path.Combine(Path.GetTempPath(), "RJsimpson");
@@ -51,8 +53,35 @@ namespace RJsimpson
             OutputRecorderParity = 0;
             BroadcastParity = 0;
 
-            isBoradcasting = false;
+            IsBoradcasting = false;
         }
+
+        private void InitVariables()
+        {
+            StopBroadCasting = false;
+            StopRecPictureBox.Visible = false;
+            BroadCastingLabel.Visible = false;
+            audioLevelsUIControl1.Visible = false;
+
+            OutputFolder = Path.Combine(Path.GetTempPath(), "RJsimpson");
+
+            Directory.CreateDirectory(OutputFolder);
+
+            // CaptureInstance = new WasapiLoopbackCapture(WasapiLoopbackCapture.GetDefaultLoopbackCaptureDevice());
+
+            MixerLoopParity = false;
+            MicLoopParity = false;
+            OutputRecorderLoopParity = false;
+            BroadcasterRecorderLoopParity = false;
+
+            MixerParity = 0;
+            MicRecorderParity = 0;
+            OutputRecorderParity = 0;
+            BroadcastParity = 0;
+
+            IsBoradcasting = false;
+        }
+
 
         #region GlobalVariables
 
@@ -88,11 +117,10 @@ namespace RJsimpson
 
         public static int BroadcastParity { get; set; }
 
-        public static bool isBoradcasting { get; set; }
+        public static bool IsBoradcasting { get; set; }
 
-        private string outputFilename;
+        public static bool StopBroadCasting { get; set; }
 
-        private string outputFilenameToBroadCast;
 
         private static string OutputFolder { get; set; }
 
@@ -102,13 +130,10 @@ namespace RJsimpson
 
         static int read;
 
-        static bool loopParity = false;
-
         private static SemaphoreSlim RecordingCompletedSignal { get; } = new SemaphoreSlim(0, 1);
 
         public static string CurrentReadyBroadCast { get; private set; }
 
-        string broadcastingFile;
 
 
         #endregion
@@ -172,7 +197,7 @@ namespace RJsimpson
             mp3SoundCapture.WaveFormat = PcmSoundFormat.Pcm44kHz16bitMono;
             mp3SoundCapture.Mp3BitRate = Mp3BitRate.BitRate192;
             mp3SoundCapture.WaitOnStop = true;
-            internalMp3SoundCapture = mp3SoundCapture;
+            InternalMp3SoundCapture = mp3SoundCapture;
             #endregion
 
             #region micDeviceSetup
@@ -183,12 +208,12 @@ namespace RJsimpson
             mp3MicCapture.WaveFormat = PcmSoundFormat.Pcm44kHz16bitMono;
             mp3MicCapture.Mp3BitRate = Mp3BitRate.BitRate192;
             mp3MicCapture.WaitOnStop = true;
-            internalMp3MicCapture = mp3MicCapture;
+            InternalMp3MicCapture = mp3MicCapture;
             #endregion
         }
 
-        public static Mp3SoundCapture internalMp3SoundCapture { get; set; }
-        public static Mp3SoundCapture internalMp3MicCapture { get; set; }
+        public static Mp3SoundCapture InternalMp3SoundCapture { get; set; }
+        public static Mp3SoundCapture InternalMp3MicCapture { get; set; }
 
 
         private void Play_Click(object sender, EventArgs e)
@@ -197,6 +222,7 @@ namespace RJsimpson
             Thread RecordOutputFilesThread = new Thread(RecordOutputFiles);
             Thread MixingThread = new Thread(MixFiles);
             Thread BroadCastFilesThread = new Thread(BroadCastFiles);
+            StopBroadCasting = false;
 
             RecordMicFilesThread.IsBackground = true;
             RecordOutputFilesThread.IsBackground = true;
@@ -207,8 +233,19 @@ namespace RJsimpson
             RecordOutputFilesThread.Start();
             MixingThread.Start();
             BroadCastFilesThread.Start();
+            this.Settings.Click -= Settings_Click;
+            this.Settings.Click += Settings_Click_While_Playing;
 
+            
+            Play.Visible = false;
+            SetStatus();
+            StopRecPictureBox.Visible = true;
+        }
 
+        private void Settings_Click_While_Playing(object sender, EventArgs e)
+        {
+             MessageBox.Show("The app is already broadcasting please stop broadcast to enter settings", "Settings error",
+                  MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
 
@@ -219,7 +256,7 @@ namespace RJsimpson
         private static void RecordMicFiles()
         {
 
-            while (true)
+            while (!StopBroadCasting)
             {
                 string broadcastingFile = FileName(MicRecorderParity, RECORD_FILE_FROM_MIC);
                 Console.WriteLine("entered record mic thread");
@@ -248,7 +285,7 @@ namespace RJsimpson
 
         private static void RecordOutputFiles()
         {
-            while(true)
+            while(!StopBroadCasting)
             {
                 Console.WriteLine("entered record out thread");
 
@@ -287,7 +324,7 @@ namespace RJsimpson
                 }
                 catch (Exception e)
                 {
-
+                    throw (e);
                 }
                 Console.WriteLine("config for rec just ended");
 
@@ -343,6 +380,7 @@ namespace RJsimpson
 
 
         #region newLibrary
+
 
         private static Process CompressFileToMP3(string arguments, EventHandler onExecutionCompleted)
         {
@@ -472,12 +510,12 @@ namespace RJsimpson
 
         private static void StartRecording()
         {
-            var lines = Execute($"-device=\"{internalMp3MicCapture.CaptureDevice.Description.Substring(0, 31)}\"");
+            var lines = Execute($"-device=\"{InternalMp3MicCapture.CaptureDevice.Description.Substring(0, 31)}\"");
             string fileDestination = FileName(MicRecorderParity, RECORD_FILE_FROM_MIC);
 
             string line = lines;
             var configuration =
-                $"-device=\"{internalMp3MicCapture.CaptureDevice.Description.Substring(0, 31)}\" " +
+                $"-device=\"{InternalMp3MicCapture.CaptureDevice.Description.Substring(0, 31)}\" " +
                 $"-line=\"{line}\" " +
                 $"-v=100 " +
                 $"-br=192 -sr=44100 -trg=\"{fileDestination}\" -tm={BUFFER_LENGTH}";
@@ -503,7 +541,7 @@ namespace RJsimpson
         #endregion
         private static void MixFiles()
         {
-            while (true)
+            while (!StopBroadCasting)
             {
                 if (!isMixingStarted)
                 {
@@ -559,12 +597,12 @@ namespace RJsimpson
 
         private static void BroadCastFiles()
         {
-            while (true)
+            while (!StopBroadCasting)
             {
-
+                
                 Console.WriteLine("entered broadcasting");
 
-                if (!isBoradcasting)
+                if (!IsBoradcasting)
                 {
                     Console.WriteLine("entered broadcasting sleep mode");
 
@@ -593,13 +631,15 @@ namespace RJsimpson
                     System.Threading.Thread.Sleep(50);
                 }
 
-                if (!isBoradcasting)
+                if (!IsBoradcasting)
                 {
                     ConnectToIceCast();
                     if (icecast.isConnected())
                     { //create method to set these labels outside of this method
-                        isBoradcasting = true;
+                        IsBoradcasting = true;
                         Console.WriteLine("Connected broadcasting");
+                        MessageBox.Show("Broadcasting Started", "Success",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     }
                     else
@@ -627,12 +667,13 @@ namespace RJsimpson
                                 {
                                     icecast.send(buff, read);
                                 }
-                                catch (IOException e)
+                                catch (IOException)
                                 {
-                                    isBoradcasting = false;
+                                    IsBoradcasting = false;
                                     MessageBox.Show(icecast.GetError(), "IceCast Error",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    break;
+
+                                break;
                                 }
                             }
                             else break;
@@ -649,11 +690,11 @@ namespace RJsimpson
 
         #endregion
 
-        private void setStatus()
+        private void SetStatus()
         {
 
-            label1.Text = "Connected";
-            label1.ForeColor = Color.Green;
+            label1.Visible = false;
+            BroadCastingLabel.Visible = true;
         }
 
         private static string FileName(int fileNumber, int fileType)
@@ -808,7 +849,7 @@ namespace RJsimpson
                     if (fileStream != null) fileStream.Close();  //This line is me being overly cautious, fileStream will never be null unless an exception occurs... and I know the "using" does it but its helpful to be explicit - especially when we encounter errors - at least for me anyway!
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
 
@@ -833,6 +874,20 @@ namespace RJsimpson
             icecast.open();
             return icecast.isConnected();
 
+        }
+
+        private void StopRecPictureBox_Click(object sender, EventArgs e)
+        {
+            StopBroadCasting = true;
+            Play.Visible = true;
+            InitVariables();
+            label1.Visible = true;
+            BroadCastingLabel.Visible = false;
+
+            this.Settings.Click -= Settings_Click_While_Playing;
+
+            this.Settings.Click += Settings_Click;
+            StopRecPictureBox.Visible = false;
         }
     }
 }
