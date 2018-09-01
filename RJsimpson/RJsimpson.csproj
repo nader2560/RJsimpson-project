@@ -366,6 +366,9 @@
     <Content Include="libwinpthread-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MicrophoneRecorder.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MixerProcess.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

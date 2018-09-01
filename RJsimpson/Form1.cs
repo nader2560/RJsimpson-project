@@ -96,9 +96,11 @@ namespace RJsimpson
 
         public const int RECORD_FILE_FROM_OUTPUT_DEVICE_WAV = 3;
 
+        public const int RECORD_FILE_FROM_MIC_WAV = 4;
+
         public const int BUFFER_FILE_COUNT = 15;
 
-        public const int BUFFER_LENGTH = 10000;
+        public const int BUFFER_LENGTH = 5000;
 
 
         private static bool MixerLoopParity { get; set; }
@@ -258,7 +260,7 @@ namespace RJsimpson
 
             while (!StopBroadCasting)
             {
-                string broadcastingFile = FileName(MicRecorderParity, RECORD_FILE_FROM_MIC);
+                string broadcastingFile = FileName(MicRecorderParity, RECORD_FILE_FROM_MIC_WAV);
                 Console.WriteLine("entered record mic thread");
 
                 while (!CanReadFile(broadcastingFile))
@@ -267,17 +269,47 @@ namespace RJsimpson
                     Console.WriteLine("can't access file from mic recorder");
                     System.Threading.Thread.Sleep(50);
                 }
-                StartRecording();
-                Console.WriteLine("Started record mic");
+                #region OLD code
+                //StartRecording();
+                //Console.WriteLine("Started record mic");
+
+                //System.Threading.Thread.Sleep(BUFFER_LENGTH);
+                //Console.WriteLine("End record mic thread");
+
+                //StopRecording();
+                //Console.WriteLine("stop record mic thread");
+                //System.Threading.Thread.Sleep(50); 
+                #endregion
+
+
+                #region new code
+
+
+                var configurationForRecording =
+                    $"\"{broadcastingFile}\" " +
+                    $"{BUFFER_LENGTH}" + " " +
+                    $"\"{FileName(MicRecorderParity, RECORD_FILE_FROM_MIC)}\"";
+
+                Console.WriteLine(configurationForRecording);
+
+
+                Process MicRecProcess = RecordFromMic(configurationForRecording, null);
+
+                Console.WriteLine($"MIC process id = {MicRecProcess.Id}");
 
                 System.Threading.Thread.Sleep(BUFFER_LENGTH);
-                Console.WriteLine("End record mic thread");
 
-                StopRecording();
-                Console.WriteLine("stop record mic thread");
+                Console.WriteLine(configurationForRecording);
+
+                Console.WriteLine("config for rec just ended");
+
+                Console.WriteLine("stop record out thread");
                 System.Threading.Thread.Sleep(50);
 
                 FlagManager(RECORD_FILE_FROM_MIC);
+
+                #endregion
+
             }
         }
 
@@ -361,19 +393,7 @@ namespace RJsimpson
                 FlagManager(RECORD_FILE_FROM_OUTPUT_DEVICE);
                 #endregion
 
-                #region OldCode
-                //internalMp3SoundCapture.Start(broadcastingFile);
-                //Console.WriteLine("Started record out");
-
-                //System.Threading.Thread.Sleep(BUFFER_LENGTH);
-                //Console.WriteLine("End record out thread");
-
-                //internalMp3SoundCapture.Stop();
-                //Console.WriteLine("stop record out thread");
-                //System.Threading.Thread.Sleep(50);
-
-                //FlagManager(RECORD_FILE_FROM_OUTPUT_DEVICE); 
-                #endregion
+                
             }
 
         }
@@ -432,6 +452,30 @@ namespace RJsimpson
             return recordingProc;
         }
 
+        private static Process RecordFromMic(string arguments, EventHandler onExecutionCompleted)
+        {
+            var recordingProc = new Process
+            {
+                StartInfo =
+                {
+                    CreateNoWindow = true,
+                    WorkingDirectory = Application.StartupPath,
+                    FileName = "MicrophoneRecorder.exe",
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                },
+                EnableRaisingEvents = true
+            };
+
+            if (onExecutionCompleted != null)
+                recordingProc.Exited += onExecutionCompleted;
+
+            recordingProc.Start();
+            return recordingProc;
+        }
 
         private static Process InitiateMp3StreamProcess(string arguments, EventHandler onExecutionCompleted)
         {
@@ -551,7 +595,7 @@ namespace RJsimpson
 
                 }
                 Console.WriteLine("entered mix thread and awake");
-                if (((MixerParity >= OutputRecorderParity) && (OutputRecorderLoopParity == MixerLoopParity)) || ((MixerParity >= MicRecorderParity)) && (MixerLoopParity == MicLoopParity))
+                if (((MixerParity >= OutputRecorderParity-1) && (OutputRecorderLoopParity == MixerLoopParity)) || ((MixerParity >= MicRecorderParity-1)) && (MixerLoopParity == MicLoopParity))
                 {
                     System.Threading.Thread.Sleep(50);
                     Console.WriteLine($"something is worng with the mixer mixerparity: {MixerParity}" +
@@ -606,7 +650,7 @@ namespace RJsimpson
                 {
                     Console.WriteLine("entered broadcasting sleep mode");
 
-                    System.Threading.Thread.Sleep(5 * BUFFER_LENGTH);
+                    System.Threading.Thread.Sleep(4 * BUFFER_LENGTH);
 
                 }
                 bool broadcastingTooFast = false;
@@ -705,11 +749,13 @@ namespace RJsimpson
                 broadcastingFile = Path.Combine(OutputFolder, $"RecordFromOutput {fileNumber}.mp3");
             else if (fileType == RECORD_FILE_FROM_MIC)
                 broadcastingFile = Path.Combine(OutputFolder, $"RecordFromMic {fileNumber}.mp3");
-            else if(fileType == BROADCAST_MIX_OUTPUT_FILE)
+            else if (fileType == BROADCAST_MIX_OUTPUT_FILE)
                 broadcastingFile = Path.Combine(OutputFolder, $"MixOutput {fileNumber}.mp3");
-            else
+            else if (fileType == RECORD_FILE_FROM_OUTPUT_DEVICE_WAV)
                 broadcastingFile = Path.Combine(OutputFolder, $"RecordFromOutput {fileNumber}.wav");
-
+            else if (fileType == RECORD_FILE_FROM_MIC_WAV)
+                broadcastingFile = Path.Combine(OutputFolder, $"RecordFromMic {fileNumber}.wav");
+            else return null;
             return broadcastingFile;
         }
 
@@ -772,69 +818,7 @@ namespace RJsimpson
         /// These files should be existing in a temporay folder
         /// <returns>The path of mashed up mp3 file</returns>
         /// 
-        private static void CreateMashup(string[] files, string outputFileName)
-        {
-            // because there is no mash up with less than 2 files
-            if (files.Count() < 2)
-            {
-                throw new Exception("Not enough files selected!");
-            }
-
-            try
-            {
-                // Create a mixer object
-                // This will be used for merging files together
-                var mixer = new WaveMixerStream32
-                {
-                    AutoStop = true
-                };
-
-                // Set the path to store the mashed up output file
-                var outputFile = Path.Combine(OutputFolder,
-                    outputFileName);
-
-                foreach (var file in files)
-                {
-                    // for each file -
-                    // check if it exists in the temp folder
-
-                    var filePath = file;
-                    if (File.Exists(filePath))
-                    {
-                        // create mp3 reader object
-                        var reader = new Mp3FileReader(filePath);
-
-                        // create a wave stream and a channel object
-                        var waveStream = WaveFormatConversionStream.CreatePcmStream(reader);
-                        var channel = new WaveChannel32(waveStream)
-                        {
-                            //Set the volume
-                            Volume = 0.5f
-                        };
-
-                        // add channel as an input stream to the mixer
-                        mixer.AddInputStream(channel);
-
-                    }
-                }
-
-                // convert wave stream from mixer to mp3
-                var wave32 = new Wave32To16Stream(mixer);
-                var mp3Writer = new LameMP3FileWriter(outputFile, wave32.WaveFormat, 128);
-                wave32.CopyTo(mp3Writer);
-
-                // close all streams
-                wave32.Close();
-                mp3Writer.Close();
-
-                // return the mashed up file path
-            }
-            catch (Exception)
-            {
-                // TODO: handle exception
-                throw;
-            }
-        }
+       
 
         internal static bool CanReadFile(string filePath)
         {
@@ -883,6 +867,7 @@ namespace RJsimpson
             InitVariables();
             label1.Visible = true;
             BroadCastingLabel.Visible = false;
+            
 
             this.Settings.Click -= Settings_Click_While_Playing;
 
