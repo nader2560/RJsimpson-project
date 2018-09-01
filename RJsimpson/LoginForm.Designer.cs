@@ -43,7 +43,7 @@
             // 
             this.Password.BackColor = System.Drawing.Color.White;
             this.Password.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Password.Location = new System.Drawing.Point(119, 86);
+            this.Password.Location = new System.Drawing.Point(100, 106);
             this.Password.Name = "Password";
             this.Password.PasswordChar = '*';
             this.Password.Size = new System.Drawing.Size(151, 26);
@@ -55,10 +55,10 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::RJsimpson.Properties.Resources.play1;
-            this.pictureBox1.Location = new System.Drawing.Point(157, 144);
+            this.pictureBox1.Image = global::RJsimpson.Properties.Resources.login;
+            this.pictureBox1.Location = new System.Drawing.Point(255, 103);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(66, 33);
+            this.pictureBox1.Size = new System.Drawing.Size(42, 33);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
@@ -66,10 +66,10 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Image = global::RJsimpson.Properties.Resources._001_remove_button;
-            this.pictureBox3.Location = new System.Drawing.Point(343, 12);
+            this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox3.Location = new System.Drawing.Point(337, -2);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(44, 39);
+            this.pictureBox3.Size = new System.Drawing.Size(50, 48);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox3.TabIndex = 10;
             this.pictureBox3.TabStop = false;
@@ -80,7 +80,7 @@
             this.WrongPassLabel.AutoSize = true;
             this.WrongPassLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.WrongPassLabel.ForeColor = System.Drawing.Color.Red;
-            this.WrongPassLabel.Location = new System.Drawing.Point(139, 115);
+            this.WrongPassLabel.Location = new System.Drawing.Point(120, 135);
             this.WrongPassLabel.Name = "WrongPassLabel";
             this.WrongPassLabel.Size = new System.Drawing.Size(114, 16);
             this.WrongPassLabel.TabIndex = 11;
@@ -102,7 +102,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Brown;
-            this.label4.Location = new System.Drawing.Point(211, 191);
+            this.label4.Location = new System.Drawing.Point(236, 181);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(15, 13);
             this.label4.TabIndex = 14;
@@ -112,19 +112,20 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Location = new System.Drawing.Point(97, 191);
+            this.label3.ForeColor = System.Drawing.Color.Black;
+            this.label3.Location = new System.Drawing.Point(116, 181);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(185, 13);
+            this.label3.Size = new System.Drawing.Size(178, 13);
             this.label3.TabIndex = 13;
-            this.label3.Text = "Made From Tunisia with ♥ by eDonec";
+            this.label3.Text = "Made From Somalia with  ♥  by VOS";
             // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(399, 213);
+            this.BackColor = System.Drawing.Color.White;
+            this.BackgroundImage = global::RJsimpson.Properties.Resources.Background2;
+            this.ClientSize = new System.Drawing.Size(399, 203);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
